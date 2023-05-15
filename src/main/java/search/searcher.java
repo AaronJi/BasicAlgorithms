@@ -40,6 +40,7 @@ public class searcher {
         return ans;
     }
 
+
     /*
      * 35 Easy
      * 搜索插入位置

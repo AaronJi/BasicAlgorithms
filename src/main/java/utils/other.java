@@ -505,6 +505,7 @@ public class other {
      * 41 Hard
      * 给你一个未排序的整数数组 nums ，请你找出其中没有出现的最小的正整数。
      * 将数组本身作为Hash Map!
+     * 我们对数组进行遍历，对于遍历到的数x，如果它在[1,N] 的范围内，那么就将数组中的第x−1 个位置（注意：数组下标从0 开始）打上「标记」。在遍历结束之后，如果所有的位置都被打上了标记，那么答案是N+1，否则答案是最小的没有打上标记的位置加1。
      * n: nums个数；
      * 时间复杂度：O(n)
      * 空间复杂度：O(1)
@@ -593,6 +594,8 @@ public class other {
     问题就在这，假设两柱子分别为 i，j。那么就有 iLeftMax,iRightMax,jLeftMx,jRightMax 这个变量。由于 j>i ，故 jLeftMax>=iLeftMax，iRigthMax>=jRightMax.
     那么，如果 iLeftMax>jRightMax，则必有 jLeftMax >= jRightMax，所有我们能接 j 点的水。
     如果 jRightMax>iLeftMax，则必有 iRightMax >= iLeftMax，所以我们能接 i 点的水。
+     * 时间复杂度：O(n)
+     * 空间复杂度：O(n)
      * */
     public static int trap(int[] height) {
         int ans = 0;
@@ -715,6 +718,256 @@ public class other {
         return -1;
     }
 
+    /*
+     * 38 Medium
+     * 外观数列
+     * 外观数列是一个整数序列，从数字 1 开始，序列中的每一项都是对前一项的描述。
+     * N: 给定的正整数
+     * M: 生成的字符串中的最大长度
+     * 时间复杂度：O(N*M)
+     * 空间复杂度：O(M)
+     * */
+    public String countAndSay(int n) {
+        String str = "1";
+        for (int i = 2; i <= n; ++i) {
+            StringBuilder sb = new StringBuilder();
+            int start = 0;
+            int pos = 0;
 
+            while (pos < str.length()) {
+                while (pos < str.length() && str.charAt(pos) == str.charAt(start)) {
+                    pos++;
+                }
+                sb.append(Integer.toString(pos - start)).append(str.charAt(start));
+                start = pos;
+            }
+            str = sb.toString();
+        }
+
+        return str;
+    }
+
+    /*
+     * 38 Medium
+     * 字符串相乘
+     * 给定两个以字符串形式表示的非负整数 num1 和 num2，返回 num1 和 num2 的乘积，它们的乘积也表示为字符串形式。
+     * m: num1长度
+     * n: num2长度
+     * 时间复杂度：O(mn + n^2)
+     * 空间复杂度：O(m + n)
+     * */
+    public String multiply(String num1, String num2) {
+        if (num1.equals("0") || num2.equals("0")) {
+            return "0";
+        }
+        String ans = "0";
+        int m = num1.length(), n = num2.length();
+        for (int i = n - 1; i >= 0; i--) {
+            StringBuffer curr = new StringBuffer();
+            int add = 0;
+            for (int j = n - 1; j > i; j--) {
+                curr.append(0);
+            }
+            int y = num2.charAt(i) - '0';
+            for (int j = m - 1; j >= 0; j--) {
+                int x = num1.charAt(j) - '0';
+                int product = x * y + add;
+                curr.append(product % 10);
+                add = product / 10;
+            }
+            if (add != 0) {
+                curr.append(add % 10);
+            }
+            ans = addStrings(ans, curr.reverse().toString());
+        }
+        return ans;
+    }
+
+    public String addStrings(String num1, String num2) {
+        int i = num1.length() - 1, j = num2.length() - 1, add = 0;
+        StringBuffer ans = new StringBuffer();
+        while (i >= 0 || j >= 0 || add != 0) {
+            int x = i >= 0 ? num1.charAt(i) - '0' : 0;
+            int y = j >= 0 ? num2.charAt(j) - '0' : 0;
+            int result = x + y + add;
+            ans.append(result % 10);
+            add = result / 10;
+            i--;
+            j--;
+        }
+        ans.reverse();
+        return ans.toString();
+    }
+
+    /*
+     * 38 Medium
+     * 字符串相乘
+     * 给定两个以字符串形式表示的非负整数 num1 和 num2，返回 num1 和 num2 的乘积，它们的乘积也表示为字符串形式。
+     * m: num1长度
+     * n: num2长度
+     * 时间复杂度：O(mn)
+     * 空间复杂度：O(m + n)
+     * */
+    public String multiply1(String num1, String num2) {
+        if (num1.equals("0") || num2.equals("0")) {
+            return "0";
+        }
+        int m = num1.length(), n = num2.length();
+        int[] ansArr = new int[m + n];
+        for (int i = m - 1; i >= 0; i--) {
+            int x = num1.charAt(i) - '0';
+            for (int j = n - 1; j >= 0; j--) {
+                int y = num2.charAt(j) - '0';
+                ansArr[i + j + 1] += x * y;
+            }
+        }
+        for (int i = m + n - 1; i > 0; i--) {
+            ansArr[i - 1] += ansArr[i] / 10;
+            ansArr[i] %= 10;
+        }
+        int index = ansArr[0] == 0 ? 1 : 0;
+        StringBuffer ans = new StringBuffer();
+        while (index < m + n) {
+            ans.append(ansArr[index]);
+            index++;
+        }
+        return ans.toString();
+    }
+
+    /*
+     * 44 Medium
+     * 跳跃游戏 II
+     * 给定一个长度为 n 的 0 索引整数数组 nums。初始位置为 nums[0]。
+     * 每个元素 nums[i] 表示从索引 i 向前跳转的最大长度。换句话说，如果你在 nums[i] 处，你可以跳转到任意 nums[i + j] 处
+     * n: nums长度
+     * 时间复杂度：O(n^2)
+     * 空间复杂度：O(1)
+     * */
+    public int jump(int[] nums) {
+        int position = nums.length - 1;
+        int steps = 0;
+        while (position > 0) {
+            for (int i = 0; i < position; i++) {
+                if (i + nums[i] >= position) {
+                    position = i;
+                    steps++;
+                    break;
+                }
+            }
+        }
+        return steps;
+    }
+
+    /*
+     * 44 Medium
+     * 跳跃游戏 II
+     * 给定一个长度为 n 的 0 索引整数数组 nums。初始位置为 nums[0]。
+     * 每个元素 nums[i] 表示从索引 i 向前跳转的最大长度。换句话说，如果你在 nums[i] 处，你可以跳转到任意 nums[i + j] 处
+     * n: nums长度
+     * 时间复杂度：O(n)
+     * 空间复杂度：O(1)
+     * */
+    public int jump1(int[] nums) {
+        int length = nums.length;
+        int end = 0;
+        int maxPosition = 0;
+        int steps = 0;
+        for (int i = 0; i < length - 1; i++) {
+            maxPosition = Math.max(maxPosition, i + nums[i]);
+            if (i == end) {
+                end = maxPosition;
+                steps++;
+            }
+        }
+        return steps;
+    }
+
+    /*
+     * 49 Medium
+     * 字母异位词分组
+     * 给你一个字符串数组，请你将 字母异位词 组合在一起。可以按任意顺序返回结果列表。
+     * 字母异位词 是由重新排列源单词的字母得到的一个新单词，所有源单词中的字母通常恰好只用一次。
+     * n: 字符串数量
+     * k: 字符串最大长度
+     * 时间复杂度：O(n*k*logk)
+     * 空间复杂度：O(n*k)
+     * */
+    public List<List<String>> groupAnagrams(String[] strs) {
+        Map<String, List<String>> map = new HashMap<String, List<String>>();
+        for (String str : strs) {
+            char[] array = str.toCharArray();
+            Arrays.sort(array);
+            String key = new String(array);
+            List<String> list = map.getOrDefault(key, new ArrayList<String>());
+            list.add(str);
+            map.put(key, list);
+        }
+        return new ArrayList<List<String>>(map.values());
+    }
+
+    /*
+     * 49 Medium
+     * 字母异位词分组
+     * 给你一个字符串数组，请你将 字母异位词 组合在一起。可以按任意顺序返回结果列表。
+     * 字母异位词 是由重新排列源单词的字母得到的一个新单词，所有源单词中的字母通常恰好只用一次。
+     * n: 字符串数量
+     * k: 字符串最大长度
+     * Omega: 字符集
+     * 时间复杂度：O(n*(k + |Omega|))
+     * 空间复杂度：O(n*(k + |Omega|))
+     * */
+    public List<List<String>> groupAnagrams1(String[] strs) {
+        Map<String, List<String>> map = new HashMap<String, List<String>>();
+        for (String str : strs) {
+            int[] counts = new int[26];
+            int length = str.length();
+            for (int i = 0; i < length; i++) {
+                counts[str.charAt(i) - 'a']++;
+            }
+            // 将每个出现次数大于 0 的字母和出现次数按顺序拼接成字符串，作为哈希表的键
+            StringBuffer sb = new StringBuffer();
+            for (int i = 0; i < 26; i++) {
+                if (counts[i] != 0) {
+                    sb.append((char) ('a' + i));
+                    sb.append(counts[i]);
+                }
+            }
+            String key = sb.toString();
+            List<String> list = map.getOrDefault(key, new ArrayList<String>());
+            list.add(str);
+            map.put(key, list);
+        }
+        return new ArrayList<List<String>>(map.values());
+    }
+
+    /*
+     * 50 Medium
+     * Pow(x, n)
+     * 快速幂算法
+     * 时间复杂度：O(log n)
+     * 空间复杂度：O(1)
+     * */
+    public double myPow(double x, int n) {
+        long N = n;
+        return N >= 0 ? quickMul(x, N) : 1.0 / quickMul(x, -N);
+    }
+
+    public double quickMul(double x, long N) {
+        double ans = 1.0;
+        // 贡献的初始值为 x
+        double x_contribute = x;
+        // 在对 N 进行二进制拆分的同时计算答案
+        while (N > 0) {
+            if (N % 2 == 1) {
+                // 如果 N 二进制表示的最低位为 1，那么需要计入贡献
+                ans *= x_contribute;
+            }
+            // 将贡献不断地平方
+            x_contribute *= x_contribute;
+            // 舍弃 N 二进制表示的最低位，这样我们每次只要判断最低位即可
+            N /= 2;
+        }
+        return ans;
+    }
 
 }
