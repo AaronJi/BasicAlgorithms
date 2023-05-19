@@ -3,6 +3,8 @@ package recursion;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collections;
@@ -340,4 +342,72 @@ public class Recursor {
         return N % 2 == 0 ? y * y : y * y * x;
     }
 
+    /*
+     * 50 Hard
+     * N 皇后
+     * 研究的是如何将 n 个皇后放置在 n×n 的棋盘上，并且使皇后彼此之间不能相互攻击。
+     * 时间复杂度：O(n!)
+     * 空间复杂度：O(n)
+     * */
+    public List<List<String>> solveNQueens(int n) {
+        List<List<String>> res = new ArrayList<List<String>>();
+        int[] rows = new int[n];
+        //for (int i = 0; i < n; ++i) {
+        //    rows[i] = -1;
+        //}
+        Arrays.fill(rows, -1);
+
+        Set<Integer> columns = new HashSet<Integer>();
+        Set<Integer> diagonal1 = new HashSet<Integer>();
+        Set<Integer> diagonal2 = new HashSet<Integer>();
+
+        backtrack(res, rows, n, 0, columns, diagonal1, diagonal2);
+        return res;
+    }
+
+    private void backtrack(List<List<String>> res, int[] rows, int n, int row, Set<Integer> columns, Set<Integer> diagonal1, Set<Integer> diagonal2) {
+        if (row >= n) {
+            List<String> board = genBoard(rows, n);
+            res.add(board);
+            return;
+        }
+        for (int i = 0; i < n; ++i) {
+            if (columns.contains(i)) {
+                continue;
+            }
+
+            if (diagonal1.contains(row - i)) {
+                continue;
+            }
+            if (diagonal2.contains(row + i)) {
+                continue;
+            }
+
+            rows[row] = i;
+            columns.add(i);
+            diagonal1.add(row - i);
+            diagonal2.add(row + i);
+
+            backtrack(res, rows, n, row + 1, columns, diagonal1, diagonal2);
+
+            rows[row] = -1;
+            columns.remove(i);
+            diagonal1.remove(row - i);
+            diagonal2.remove(row + i);
+        }
+    }
+
+    private List<String> genBoard(int[] rows, int n) {
+        List<String> board = new ArrayList<String>();
+        for (int i = 0; i < n; ++i) {
+            char[] rowChars = new char[n];
+            //for (int j = 0; j < n; ++j) {
+            //    rowChars[j] = '.';
+            //}
+            Arrays.fill(rowChars, '.');
+            rowChars[rows[i]] = 'Q';
+            board.add(new String(rowChars));
+        }
+        return board;
+    }
 }
