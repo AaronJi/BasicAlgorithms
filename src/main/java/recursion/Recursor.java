@@ -410,4 +410,12 @@ public class Recursor {
         }
         return board;
     }
+
+    /*
+     * 50 Hard
+     * N 皇后
+     * 研究的是如何将 n 个皇后放置在 n×n 的棋盘上，并且使皇后彼此之间不能相互攻击。
+     * 时间复杂度：O(n!)
+     * 空间复杂度：O(n)
+     * */
 }
