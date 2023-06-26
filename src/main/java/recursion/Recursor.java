@@ -418,4 +418,39 @@ public class Recursor {
      * 时间复杂度：O(n!)
      * 空间复杂度：O(n)
      * */
+
+
+
+    // n个盒子，每个盒子含不同数量的苹果，不能同时拿两个相邻的盒子，求最多可能能拿到的苹果
+    public int getMaxApple(int[] apples) {
+        int n = apples.length;
+
+        int result = 0;
+        int currResult = 0;
+        getNext(apples, n, 0, result, currResult);
+        int result0 = result;
+
+        result = 0;
+        currResult = 0;
+        getNext(apples, n, 1, result, currResult);
+
+        return Math.max(result, result0);
+    }
+
+    public void getNext(int[] apples, int n, int i, int result, int currResult) {
+        if (i >= n) {
+            return;
+        }
+
+        currResult += apples[i];
+        if (currResult > result) {
+            result = currResult;
+        }
+
+        for (int j = i +2; j < n; j++) {
+            getNext(apples, n, j, result, currResult);
+        }
+
+        return;
+    }
 }
